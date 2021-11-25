@@ -1,4 +1,5 @@
-import { AxiosRequestConfig, AxiosStatic } from "axios"
+import { InternalError } from "@src/util/errors/internal-error"
+import { AxiosError, AxiosRequestConfig, AxiosStatic } from "axios"
 
 export interface StormGlassPointSource {
     [key: string]: number
@@ -30,31 +31,55 @@ export interface ForecastPoint {
     windSpeed: number
 }
 
+export class ClientRequestError extends InternalError {
+    constructor(message: string) {
+        const internalMessage =
+            "Unexpected error when trying to communicate to StormGlass"
+        super(`${internalMessage}: ${message}`)
+    }
+}
+
+export class StormGlassResponseError extends InternalError {
+    constructor(message: string) {
+        const internalMessage =
+            "Unexpected error returned by the StormGlass service"
+        super(`${internalMessage}: ${message}`)
+    }
+}
+
 export class StormGlass {
 
     readonly stormGlassApiParams =
         "swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed"
-    readonly stormGlassApiSource =
-        "noaa"
+    readonly stormGlassApiSource = "noaa"
     readonly stormGlassApiEnd = "1637832099"
 
     constructor(protected request: AxiosStatic) { }
 
     public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
-        const url = `https://api.stormglass.io/v2/weather/point
+        try {
+            const url = `https://api.stormglass.io/v2/weather/point
             ?params=${this.stormGlassApiParams}
             &source=${this.stormGlassApiSource}
             &end=${this.stormGlassApiEnd}
             &lat=${lat}&lng=${lng}`
-            
-        const config: AxiosRequestConfig = {
-            headers: {
-                Authorization: "fake-api-key"
-            }
-        }
 
-        const response = await this.request.get<StormGlassForecastResponse>(url, config)
-        return this.normalizeResponse(response.data)
+            const config: AxiosRequestConfig = {
+                headers: {
+                    Authorization: "fake-api-key"
+                }
+            }
+
+            const response = await this.request.get<StormGlassForecastResponse>(url, config)
+            return this.normalizeResponse(response.data)
+        } catch (err) {
+            if ((err as AxiosError).response && (err as AxiosError).response?.status) {
+                throw new StormGlassResponseError(
+                    `Error: ${JSON.stringify((err as AxiosError).response?.data)} Code: ${
+                        (err as AxiosError).response?.status}`)
+            }
+            throw new ClientRequestError((err as Error).message)
+        }
     }
 
     private normalizeResponse(

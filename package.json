@@ -37,7 +37,10 @@
   },
   "dependencies": {
     "@overnightjs/core": "1.7.6",
+    "@types/config": "0.0.40",
     "axios": "0.24.0",
+    "config": "3.3.6",
+    "dotenv": "^10.0.0",
     "express": "4.17.1",
     "module-alias": "2.2.2"
   }

@@ -119,3 +119,5 @@ dist
 
 # Bruno Hubner
 .vscode
+tmp
+backup

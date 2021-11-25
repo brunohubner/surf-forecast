@@ -1,0 +1,97 @@
+{
+    "hours": [
+        {
+            "swellDirection": {
+                "noaa": 169.11
+            },
+            "swellHeight": {
+                "noaa": 0.11
+            },
+            "swellPeriod": {
+                "noaa": 5.46
+            },
+            "time": "2021-11-25T07:00:00+00:00",
+            "waveDirection": {
+                "noaa": 194.05
+            },
+            "waveHeight": {
+                "noaa": 0.81
+            },
+            "windDirection": {
+                "noaa": 246.22
+            },
+            "windSpeed": {
+                "noaa": 5.81
+            }
+        },
+        {
+            "swellDirection": {
+                "noaa": 168.82
+            },
+            "swellHeight": {
+                "noaa": 0.12
+            },
+            "swellPeriod": {
+                "noaa": 5.47
+            },
+            "time": "2021-11-25T08:00:00+00:00",
+            "waveDirection": {
+                "noaa": 193.52
+            },
+            "waveHeight": {
+                "noaa": 0.8
+            },
+            "windDirection": {
+                "noaa": 246.21
+            },
+            "windSpeed": {
+                "noaa": 5.46
+            }
+        },
+        {
+            "swellDirection": {
+                "noaa": 168.54
+            },
+            "swellHeight": {
+                "noaa": 0.12
+            },
+            "swellPeriod": {
+                "noaa": 5.48
+            },
+            "time": "2021-11-25T09:00:00+00:00",
+            "waveDirection": {
+                "noaa": 192.99
+            },
+            "waveHeight": {
+                "noaa": 0.78
+            },
+            "windDirection": {
+                "noaa": 246.2
+            },
+            "windSpeed": {
+                "noaa": 5.11
+            }
+        }
+    ],
+    "meta": {
+        "cost": 1,
+        "dailyQuota": 50,
+        "end": "2021-11-25 09:21",
+        "lat": 58.7984,
+        "lng": 17.8081,
+        "params": [
+            "swellDirection",
+            "swellHeight",
+            "swellPeriod",
+            "waveDirection",
+            "waveHeight",
+            "windDirection",
+            "windSpeed"
+        ],
+        "requestCount": 3,
+        "source": [
+            "noaa"
+        ],
+        "start": "2021-11-25 00:00"
+    }
+}

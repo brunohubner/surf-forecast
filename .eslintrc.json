@@ -36,8 +36,7 @@
     "ignorePatterns": [
         "node_modules/",
         "dist/",
-        // "src/**/*.js",
-        // "test/**/*.js",
+        "tmp",
         "*.js"
     ]
 }

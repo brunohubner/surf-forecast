@@ -1,6 +1,6 @@
 import { InternalError } from "@src/util/errors/internal-error"
-import { AxiosError, AxiosRequestConfig, AxiosStatic } from "axios"
-import  config, { IConfig }  from "config"
+import * as HTTPUtil from "@src/util/request"
+import config, { IConfig } from "config"
 
 export interface StormGlassPointSource {
     [key: string]: number
@@ -59,7 +59,7 @@ export class StormGlass {
     readonly stormGlassApiSource = "noaa"
     readonly stormGlassApiEnd = "1637832099"
 
-    constructor(protected request: AxiosStatic) { }
+    constructor(protected request = new HTTPUtil.Request()) { }
 
     public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
         try {
@@ -68,20 +68,17 @@ export class StormGlass {
             &source=${this.stormGlassApiSource}
             &end=${this.stormGlassApiEnd}
             &lat=${lat}&lng=${lng}`
-            console.log(stormGlassResourceConfig.get("apiToken"))
-            const config: AxiosRequestConfig = {
+
+            const response = await this.request.get<StormGlassForecastResponse>(url, {
                 headers: {
                     Authorization: stormGlassResourceConfig.get("apiToken")
                 }
-            }
-
-            const response = await this.request.get<StormGlassForecastResponse>(url, config)
+            })
             return this.normalizeResponse(response.data)
         } catch (err) {
-            if ((err as AxiosError).response && (err as AxiosError).response?.status) {
+            if (HTTPUtil.Request.isRequestError(err as HTTPUtil.RequestError)) {
                 throw new StormGlassResponseError(
-                    `Error: ${JSON.stringify((err as AxiosError).response?.data)} Code: ${
-                        (err as AxiosError).response?.status}`)
+                    `Error: ${JSON.stringify((err as HTTPUtil.RequestError).response?.data)} Code: ${(err as HTTPUtil.RequestError).response?.status}`)
             }
             throw new ClientRequestError((err as Error).message)
         }

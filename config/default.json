@@ -5,6 +5,9 @@
                 "apiUrl": "https://api.stormglass.io/v2",
                 "apiToken": "do-not-hard-code"
             }
+        },
+        "database": {
+            "mongoUrl": "mongodb://localhost:27017/surf_forecast"
         }
     }
 }

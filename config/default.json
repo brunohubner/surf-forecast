@@ -1,5 +1,6 @@
 {
     "App": {
+        "port": 3333,
         "resources": {
             "StormGlass": {
                 "apiUrl": "https://api.stormglass.io/v2",

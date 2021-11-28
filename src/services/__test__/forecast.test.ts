@@ -1,5 +1,7 @@
-import { Beach, BeachPosition, ForecastProcessingInternalError } from "./../forecast"
+import { ForecastProcessingInternalError } from "@src/services/forecast"
+import { Beach, BeachPosition } from "@src/models/beach"
 import stormGlassNormalizedResponse3HoursFixture from "@test/fixtures/stormglass_normalized_response_3_hours.json"
+import apiForecastResponse1Beach from "@test/fixtures/api_forecast_response_1_beach.json"
 import { StormGlass } from "@src/clients/stormGlass"
 import { Forecast } from "@src/services/forecast"
 
@@ -15,66 +17,10 @@ describe("Forecast Service", () => {
             lat: -20.329372,
             lng: -40.293629,
             name: "Manly",
-            position: BeachPosition.E,
-            user: "some-user"
+            position: BeachPosition.E
         }]
 
-        const expectedResponse = [
-            {
-                time: "2021-11-25T07:00:00+00:00",
-                forecast: [{
-                    lat: -20.329372,
-                    lng: -40.293629,
-                    name: "Manly",
-                    position: "E",
-                    rating: 1,
-                    swellDirection: 169.11,
-                    swellHeight: 0.11,
-                    swellPeriod: 5.46,
-                    time: "2021-11-25T07:00:00+00:00",
-                    waveDirection: 194.05,
-                    waveHeight: 0.81,
-                    windDirection: 246.22,
-                    windSpeed: 5.81
-                }]
-            },
-            {
-                time: "2021-11-25T08:00:00+00:00",
-                forecast: [{
-                    lat: -20.329372,
-                    lng: -40.293629,
-                    name: "Manly",
-                    position: "E",
-                    rating: 1,
-                    swellDirection: 168.82,
-                    swellHeight: 0.12,
-                    swellPeriod: 5.47,
-                    time: "2021-11-25T08:00:00+00:00",
-                    waveDirection: 193.52,
-                    waveHeight: 0.8,
-                    windDirection: 246.21,
-                    windSpeed: 5.46
-                }]
-            },
-            {
-                time: "2021-11-25T09:00:00+00:00",
-                forecast: [{
-                    lat: -20.329372,
-                    lng: -40.293629,
-                    name: "Manly",
-                    position: "E",
-                    rating: 1,
-                    swellDirection: 168.54,
-                    swellHeight: 0.12,
-                    swellPeriod: 5.48,
-                    time: "2021-11-25T09:00:00+00:00",
-                    waveDirection: 192.99,
-                    waveHeight: 0.78,
-                    windDirection: 246.2,
-                    windSpeed: 5.11
-                }]
-            }
-        ]
+        const expectedResponse = apiForecastResponse1Beach
 
         const forecast = new Forecast(mockedStormGlassService)
         const beachesWithRating = await forecast.processForecastForBeaches(beaches)
@@ -94,7 +40,6 @@ describe("Forecast Service", () => {
                 lng: -40.293629,
                 name: "Manly",
                 position: BeachPosition.E,
-                user: "some-user"
             }]
 
             mockedStormGlassService.fetchPoints.mockRejectedValue(

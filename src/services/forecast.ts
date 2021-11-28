@@ -1,23 +1,9 @@
 import { InternalError } from "@src/util/errors/internal-error"
 import { ForecastPoint } from "./../clients/stormGlass"
 import { StormGlass } from "@src/clients/stormGlass"
+import { Beach } from "@src/models/beach"
 
-export enum BeachPosition {
-    N = "N",
-    E = "E",
-    S = "S",
-    W = "W"
-}
-
-export interface Beach {
-    lat: number
-    lng: number
-    name: string
-    position: BeachPosition
-    user: string
-}
-
-export interface BeachForecast extends Omit<Beach, "user">, ForecastPoint { }
+export interface BeachForecast extends Beach, ForecastPoint { }
 
 export interface TimeForecast {
     time: string

@@ -5,6 +5,8 @@ import nock from "nock"
 
 describe("Beach forecast functional tests", () => {
 	beforeAll(async () => {
+		await Beach.deleteMany({})
+
 		const defaultBeach = {
 			lat: -20.329372,
 			lng: -40.293629,

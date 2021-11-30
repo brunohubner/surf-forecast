@@ -9,6 +9,10 @@
         },
         "database": {
             "mongoUrl": "mongodb://localhost:27017/surf_forecast"
+        },
+        "auth": {
+            "key": "some-key",
+            "tokenExpiresIn": "7d"
         }
     }
 }

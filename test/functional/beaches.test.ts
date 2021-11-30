@@ -2,7 +2,7 @@ import { Beach } from "@src/models/beach"
 
 describe("Beaches functional tests", () => {
     describe("when creating a beach", () => {
-        beforeAll(async () => await Beach.deleteMany({}))
+        beforeEach(async () => await Beach.deleteMany({}))
         afterAll(async () => await Beach.deleteMany({}))
 
         it("should create a beach with success", async () => {

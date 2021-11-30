@@ -8,7 +8,7 @@ export interface User {
     password: string
 }
 
-interface UserModel extends Omit<User, "_id">, Document { }
+export interface UserModel extends Omit<User, "_id">, Document { }
 
 export enum CUSTOM_VALIDATION {
     DUPLICATED = "DUPLICATED"

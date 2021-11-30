@@ -1,5 +1,4 @@
 import { ForecastController } from "./controllers/forecast"
-import "./util/module-alias"
 import { Server } from "@overnightjs/core"
 import express, { Application } from "express"
 import * as database from "@src/database"

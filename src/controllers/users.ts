@@ -44,7 +44,10 @@ export class UsersController extends BaseController {
             const token = AuthService.generateToken(user.toJSON())
             return res.status(200).send({ token })
         } catch (err) {
-            return res.status(500).send()
+            return res.status(500).send({
+                code: 500,
+                error: "Something went wrong"
+            })
         }
     }
 }

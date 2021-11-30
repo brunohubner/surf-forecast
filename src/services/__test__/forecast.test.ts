@@ -17,7 +17,8 @@ describe("Forecast Service", () => {
             lat: -20.329372,
             lng: -40.293629,
             name: "Manly",
-            position: BeachPosition.E
+            position: BeachPosition.E,
+            user: "fake-id"
         }]
 
         const expectedResponse = apiForecastResponse1Beach
@@ -40,6 +41,7 @@ describe("Forecast Service", () => {
                 lng: -40.293629,
                 name: "Manly",
                 position: BeachPosition.E,
+                user: "fake-id"
             }]
 
             mockedStormGlassService.fetchPoints.mockRejectedValue(

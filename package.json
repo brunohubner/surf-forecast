@@ -18,6 +18,9 @@
     "typescript",
     "api"
   ],
+  "engines": {
+    "node": "14"
+  },
   "author": "Bruno Hubner",
   "license": "ISC",
   "devDependencies": {

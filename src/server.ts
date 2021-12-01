@@ -6,6 +6,8 @@ import { BeachesController } from "./controllers/beaches"
 import { UsersController } from "./controllers/users"
 import logger from "./logger"
 import * as http from "http"
+import cors from "cors"
+import expressPino from "express-pino-logger"
 
 export class SetupServer extends Server {
     private server?: http.Server
@@ -15,7 +17,11 @@ export class SetupServer extends Server {
     }
 
     private setupExpress(): void {
+        this.app.use(cors({
+            origin: "*"
+        }))
         this.app.use(express.json())
+        this.app.use(expressPino({ logger }))
     }
 
     private setupControllers(): void {

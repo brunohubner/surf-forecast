@@ -3,13 +3,13 @@ import { Get, Controller, ClassMiddleware } from "@overnightjs/core"
 import { Forecast } from "@src/services/forecast"
 import { Request, Response } from "express"
 import { authMiddleware } from "@src/middlewares/auth"
-import logger from "@src/logger"
+import { BaseController } from "."
 
 const forecast = new Forecast()
 
 @Controller("forecast")
 @ClassMiddleware(authMiddleware)
-export class ForecastController {
+export class ForecastController extends BaseController {
 
 	@Get("")
 	public async getForecastForLoggedUser(req: Request, res: Response): Promise<void> {
@@ -18,11 +18,7 @@ export class ForecastController {
 			const forecastData = await forecast.processForecastForBeaches(beaches)
 			res.status(200).send(forecastData)
 		} catch (err) {
-			logger.error(err)
-			res.status(500).send({
-				code: 500,
-				error: "Something went wrong"
-			})
+			this.sendErrorResponse(res, { code: 500, message: "Something went wrong!" })
 		}
 	}
 }

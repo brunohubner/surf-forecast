@@ -3,6 +3,7 @@ import { Get, Controller, ClassMiddleware } from "@overnightjs/core"
 import { Forecast } from "@src/services/forecast"
 import { Request, Response } from "express"
 import { authMiddleware } from "@src/middlewares/auth"
+import logger from "@src/logger"
 
 const forecast = new Forecast()
 
@@ -17,6 +18,7 @@ export class ForecastController {
 			const forecastData = await forecast.processForecastForBeaches(beaches)
 			res.status(200).send(forecastData)
 		} catch (err) {
+			logger.error(err)
 			res.status(500).send({
 				code: 500,
 				error: "Something went wrong"

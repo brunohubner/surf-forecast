@@ -3,6 +3,7 @@ import { Post, Controller } from "@overnightjs/core"
 import { Request, Response } from "express"
 import { User } from "@src/models/user"
 import { BaseController } from "."
+import logger from "@src/logger"
 
 @Controller("users")
 export class UsersController extends BaseController {
@@ -44,6 +45,7 @@ export class UsersController extends BaseController {
             const token = AuthService.generateToken(user.toJSON())
             return res.status(200).send({ token })
         } catch (err) {
+            logger.error(err)
             return res.status(500).send({
                 code: 500,
                 error: "Something went wrong"

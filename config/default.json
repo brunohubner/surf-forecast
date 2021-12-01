@@ -13,6 +13,10 @@
         "auth": {
             "key": "some-key",
             "tokenExpiresIn": "7d"
+        },
+        "logger": {
+            "enabled": true,
+            "level": "info"
         }
     }
 }

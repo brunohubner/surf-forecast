@@ -2,10 +2,10 @@ import { AuthService } from "@src/services/auth"
 import { User } from "@src/models/user"
 
 describe("Users functional tests", () => {
-    describe("When create a new user", () => {
-        beforeEach(async () => User.deleteMany({}))
-        afterAll(async () => User.deleteMany({}))
+    beforeEach(async () => User.deleteMany({}))
+    afterAll(async () => User.deleteMany({}))
 
+    describe("When create a new user", () => {
         it("should successfully create a new user with encryped password", async () => {
             const newUser = {
                 name: "John Doe",
@@ -53,9 +53,6 @@ describe("Users functional tests", () => {
         })
     })
     describe("when authenticating a user", () => {
-        beforeEach(async () => User.deleteMany({}))
-        afterAll(async () => User.deleteMany({}))
-
         it("should generate a token for a valid user", async () => {
             const newUser = {
                 name: "John Doe",
@@ -102,6 +99,40 @@ describe("Users functional tests", () => {
                 error: "Unauthorized",
                 message: "Password does not match!"
             })
+        })
+    })
+
+    describe("When getting user profile info", () => {
+        it("should return the token's owner profile inforation", async () => {
+            const newUser = {
+                name: "John Doe",
+                email: "jonh@mail.com",
+                password: "abc123"
+            }
+            const user = await new User(newUser).save()
+            const token = AuthService.generateToken(user.toJSON())
+            const { body, status } = await global.testRequest
+                .get("/users/me")
+                .set({ "x-access-token": token })
+
+            expect(status).toBe(200)
+            expect(body).toMatchObject(JSON.parse(JSON.stringify({ user })))
+        })
+
+        it("should return Not Found, when the user is not found", async () => {
+            const newUser = {
+                name: "John Doe",
+                email: "jonh@mail.com",
+                password: "abc123"
+            }
+            const user = new User(newUser)
+            const token = AuthService.generateToken(user.toJSON())
+            const { body, status } = await global.testRequest
+                .get("/users/me")
+                .set({ "x-access-token": token })
+
+            expect(status).toBe(404)
+            expect(body.message).toBe("User not found!")
         })
     })
 })

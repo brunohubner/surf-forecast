@@ -1,8 +1,9 @@
 import { AuthService } from "./../services/auth"
-import { Post, Controller } from "@overnightjs/core"
+import { Post, Controller, Get, Middleware } from "@overnightjs/core"
 import { Request, Response } from "express"
 import { User } from "@src/models/user"
 import { BaseController } from "."
+import { authMiddleware } from "@src/middlewares/auth"
 
 @Controller("users")
 export class UsersController extends BaseController {
@@ -43,6 +44,23 @@ export class UsersController extends BaseController {
             }
             const token = AuthService.generateToken(user.toJSON())
             return res.status(200).send({ token })
+        } catch (err) {
+            return this.sendErrorResponse(res, { code: 500, message: "Something went wrong!" })
+        }
+    }
+    @Get("me")
+    @Middleware(authMiddleware)
+    public async me(req: Request, res: Response): Promise<Response> {
+        try {
+            const email = req.decoded?.email || undefined
+            const user = await User.findOne({ email })
+            if (!user) {
+                return this.sendErrorResponse(res, {
+                    code: 404,
+                    message: "User not found!"
+                })
+            }
+            return res.send({ user })
         } catch (err) {
             return this.sendErrorResponse(res, { code: 500, message: "Something went wrong!" })
         }

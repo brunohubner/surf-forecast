@@ -8,7 +8,7 @@ export interface HTTPError extends Error {
 
 export function apiErrorValidator(
     error: HTTPError,
-    _: Request,
+    _: Partial<Request>,
     res: Response,
     __: NextFunction
 ): void {

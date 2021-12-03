@@ -35,7 +35,7 @@ export class ForecastController extends BaseController {
 				orderBy?: "asc" | "desc"
 				orderField?: keyof BeachForecast
 			} = req.query
-			const beaches = await Beach.find({ user: req.decoded?.id })
+			const beaches = await Beach.find({ userId: req.decoded?.id })
 			const forecastData = await forecast.processForecastForBeaches(beaches, orderBy, orderField)
 			res.status(200).send(forecastData)
 		} catch (err) {

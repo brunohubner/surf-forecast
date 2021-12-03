@@ -35,13 +35,13 @@ describe("Forecast Service", () => {
             lng: 151.289824,
             name: "Manly",
             position: GeoPosition.E,
-            user: "fake-id",
+            userId: "fake-id",
         }, {
             lat: -33.792726,
             lng: 141.289824,
             name: "Dee Why",
             position: GeoPosition.S,
-            user: "fake-id",
+            userId: "fake-id",
         }]
         const expectedResponse = [{
             time: "2020-04-26T00:00:00+00:00",
@@ -88,7 +88,7 @@ describe("Forecast Service", () => {
             lng: -40.293629,
             name: "Manly",
             position: GeoPosition.E,
-            user: "fake-id"
+            userId: "fake-id"
         }]
 
         const expectedResponse = apiForecastResponse1Beach
@@ -111,7 +111,7 @@ describe("Forecast Service", () => {
                 lng: -40.293629,
                 name: "Manly",
                 position: GeoPosition.E,
-                user: "fake-id"
+                userId: "fake-id"
             }]
 
             mockedStormGlassService.fetchPoints.mockRejectedValue(

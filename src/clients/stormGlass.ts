@@ -1,7 +1,10 @@
+import { config as dotenv } from "dotenv"
 import { InternalError } from "@src/util/errors/internal-error"
 import * as HTTPUtil from "@src/util/request"
 import config, { IConfig } from "config"
 import { TimeUtil } from "@src/util/time"
+
+dotenv()
 
 export interface StormGlassPointSource {
     [key: string]: number
@@ -69,7 +72,7 @@ export class StormGlass {
 
             const response = await this.request.get<StormGlassForecastResponse>(url, {
                 headers: {
-                    Authorization: stormGlassResourceConfig.get("apiToken")
+                    Authorization: process.env.STORM_GLASS_API_TOKEN || stormGlassResourceConfig.get("apiToken")
                 }
             })
             return this.normalizeResponse(response.data)

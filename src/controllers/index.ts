@@ -44,7 +44,7 @@ export abstract class BaseController {
 
         return duplicatedKindErrors.length
             ? { code: 409, error: error.message }
-            : { code: 422, error: error.message }
+            : { code: 400, error: error.message }
     }
 
     protected sendErrorResponse(res: Response, apiError: APIError): Response {

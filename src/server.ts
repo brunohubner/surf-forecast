@@ -7,7 +7,12 @@ import { UsersController } from "./controllers/users"
 import logger from "./logger"
 import * as http from "http"
 import cors from "cors"
+import { apiErrorValidator } from "@src/middlewares/api-error-validator"
 import expressPino from "express-pino-logger"
+import { OpenApiValidator } from "express-openapi-validator"
+import { OpenAPIV3 } from "express-openapi-validator/dist/framework/types"
+import apiSchema from "./api-schema.json"
+import swaggerUi from "swagger-ui-express"
 
 export class SetupServer extends Server {
     private server?: http.Server
@@ -35,6 +40,19 @@ export class SetupServer extends Server {
         await database.connect()
     }
 
+    private async docsSetup(): Promise<void> {
+        this.app.use("/docs", swaggerUi.serve, swaggerUi.setup(apiSchema))
+        await new OpenApiValidator({
+            apiSpec: apiSchema as OpenAPIV3.Document,
+            validateRequests: true,
+            validateResponses: true,
+        }).install(this.app)
+    }
+
+    private setupErrorHandlers(): void {
+        this.app.use(apiErrorValidator)
+    }
+
     public async close(): Promise<void> {
         await database.close()
 
@@ -56,8 +74,10 @@ export class SetupServer extends Server {
 
     public async init(): Promise<void> {
         this.setupExpress()
+        await this.docsSetup()
         this.setupControllers()
         await this.databaseSetup()
+        this.setupErrorHandlers()
     }
 
     public start(): void {

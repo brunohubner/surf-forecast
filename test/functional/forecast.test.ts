@@ -1,3 +1,4 @@
+import CacheUtil from "@src/util/cache"
 import stormGlassWeather3HoursFixture from "@test/fixtures/stormglass_weather_3_hours.json"
 import apiForecastResponse1Beach from "@test/fixtures/api_forecast_response_1_beach.json"
 import { Beach, GeoPosition } from "@src/models/beach"
@@ -13,7 +14,7 @@ describe("Beach forecast functional tests", () => {
 	}
 	let token: string
 
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await Beach.deleteMany({})
 		await User.deleteMany({})
 		const user = await new User(defaultUser).save()
@@ -28,6 +29,7 @@ describe("Beach forecast functional tests", () => {
 		}
 		const beach = new Beach(defaultBeach)
 		await beach.save()
+		CacheUtil.clearAllCache()
 	})
 	afterAll(async () => {
 		await Beach.deleteMany({})

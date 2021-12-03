@@ -1,3 +1,5 @@
+import CacheUtil from "@src/util/cache"
+import logger from "@src/logger"
 import { config as dotenv } from "dotenv"
 import { InternalError } from "@src/util/errors/internal-error"
 import * as HTTPUtil from "@src/util/request"
@@ -57,18 +59,28 @@ const stormGlassResourceConfig: IConfig = config.get(
 )
 
 export class StormGlass {
-
     readonly stormGlassApiParams =
         "swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed"
     readonly stormGlassApiSource = "noaa"
 
-    constructor(protected request = new HTTPUtil.Request()) { }
+    constructor(
+        protected request = new HTTPUtil.Request(),
+        protected cacheUtil = CacheUtil
+    ) { }
 
     public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
+        const cachedForecastPoints = this.getForecastPointsFromCache(this.getCacheKey(lat, lng))
+        if (!cachedForecastPoints) {
+            const forecastPoints = await this.getForecastPointsFromApi(lat, lng)
+            this.setForecastPointsInCache(this.getCacheKey(lat, lng), forecastPoints)
+            return forecastPoints
+        }
+        return cachedForecastPoints
+    }
+    public async getForecastPointsFromApi(lat: number, lng: number): Promise<ForecastPoint[]> {
         const endTimestamp = TimeUtil.getUnixTimeForAFutureDay(1)
         try {
-            const url =
-                `${stormGlassResourceConfig.get("apiUrl")}/weather/point?params=${this.stormGlassApiParams}&source=${this.stormGlassApiSource}&lat=${lat}&lng=${lng}&end=${endTimestamp}`
+            const url = `${stormGlassResourceConfig.get("apiUrl")}/weather/point?params=${this.stormGlassApiParams}&source=${this.stormGlassApiSource}&lat=${lat}&lng=${lng}&end=${endTimestamp}`
 
             const response = await this.request.get<StormGlassForecastResponse>(url, {
                 headers: {
@@ -83,6 +95,23 @@ export class StormGlass {
             }
             throw new ClientRequestError((err as Error).message)
         }
+    }
+
+    protected getForecastPointsFromCache(key: string): ForecastPoint[] | undefined {
+        const forecastPointsFromCache = this.cacheUtil.get<ForecastPoint[]>(key)
+        if (!forecastPointsFromCache) return
+
+        logger.info(`Using cache to return forecast points for key: ${key}`)
+        return forecastPointsFromCache
+    }
+
+    private getCacheKey(lat: number, lng: number): string {
+        return `forecast_points_${lat}_${lng}`
+    }
+
+    private setForecastPointsInCache(key: string, forecastPoints: ForecastPoint[]): boolean {
+        logger.info(`Updating cache to return forecast points for key: ${key}`)
+        return this.cacheUtil.set(key, forecastPoints, stormGlassResourceConfig.get("cacheTtl"))
     }
 
     private normalizeResponse(

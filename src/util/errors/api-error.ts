@@ -21,7 +21,6 @@ export default class ApiError {
                 || httpStatusCodes.getStatusText(error.code),
             ...(error.documentation && { documentation: error.documentation }),
             ...(error.description && { description: error.description })
-
         }
     }
 }

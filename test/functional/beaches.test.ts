@@ -57,8 +57,28 @@ describe("Beaches functional tests", () => {
             })
         })
 
-        // it.skip("should return 500 when there is any error other than validation error", async () => {
-        //     // TODO think in a way to throw a 500
-        // })
+        it("should return 500 when there is any error other than validation error", async () => {
+            jest.spyOn(Beach.prototype, "save").mockImplementationOnce(() => {
+                return Promise.reject("Fail to create a beach")
+            })
+
+            const newBeach = {
+                lat: -33.792726,
+                lng: 46.43243,
+                name: "Manly",
+                position: "E",
+            }
+            const response = await global.testRequest
+                .post("/beaches")
+                .set({ "x-access-token": token })
+                .send(newBeach)
+
+            expect(response.status).toBe(500)
+            expect(response.body).toEqual({
+                code: 500,
+                error: "Internal Server Error",
+                message: "Something went wrong!"
+            })
+        })
     })
 })

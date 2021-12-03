@@ -1,5 +1,5 @@
-import { ForecastPoint } from "./../clients/stormGlass"
 import { Beach, GeoPosition } from "@src/models/beach"
+import { ForecastPoint } from "@src/clients/stormGlass"
 
 const waveHeights = {
     ankleToKnee: {
@@ -28,7 +28,8 @@ export class Rating {
         )
         const swellHeightRating = this.getRatingForSwellSize(point.swellHeight)
         const swellPeriodRating = this.getRatingForSwellPeriod(point.swellPeriod)
-        const finalRating = (windAndWaveRating + swellHeightRating + swellPeriodRating) / 3
+        const finalRating =
+            (windAndWaveRating + swellHeightRating + swellPeriodRating) / 3
         return Math.round(finalRating)
     }
 
@@ -41,9 +42,31 @@ export class Rating {
         return 3
     }
 
+    private isWindOffShore(
+        waveDirection: string,
+        windDirection: string
+    ): boolean {
+        return (
+            (waveDirection === GeoPosition.N &&
+                windDirection === GeoPosition.S &&
+                this.beach.position === GeoPosition.N) ||
+            (waveDirection === GeoPosition.S &&
+                windDirection === GeoPosition.N &&
+                this.beach.position === GeoPosition.S) ||
+            (waveDirection === GeoPosition.E &&
+                windDirection === GeoPosition.W &&
+                this.beach.position === GeoPosition.E) ||
+            (waveDirection === GeoPosition.W &&
+                windDirection === GeoPosition.E &&
+                this.beach.position === GeoPosition.W)
+        )
+    }
+
     public getRatingForSwellPeriod(period: number): number {
-        const rating = [1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 4, 4, 4, 4, 5]
-        return rating[period > 14 ? 14 : period]
+        if (period >= 7 && period < 10) return 2
+        if (period >= 10 && period < 14) return 4
+        if (period >= 14) return 5
+        return 1
     }
 
     public getRatingForSwellSize(height: number): number {
@@ -67,14 +90,6 @@ export class Rating {
         if (coordinates >= 50 && coordinates < 120) return GeoPosition.E
         if (coordinates >= 120 && coordinates < 220) return GeoPosition.S
         if (coordinates >= 220 && coordinates < 310) return GeoPosition.W
-
         return GeoPosition.E
-    }
-
-    private isWindOffShore(
-        waveDirection: GeoPosition,
-        windDirection: GeoPosition
-    ): boolean {
-        return ("NESW".indexOf(waveDirection) + "NESW".indexOf(windDirection)) % 2 == 0
     }
 }

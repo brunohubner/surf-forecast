@@ -42,7 +42,7 @@ export class UsersController extends BaseController {
                     message: "Password does not match!"
                 })
             }
-            const token = AuthService.generateToken(user.toJSON())
+            const token = AuthService.generateToken(user.id)
             return res.status(200).send({ token })
         } catch (err) {
             return this.sendErrorResponse(res, { code: 500, message: "Something went wrong!" })
@@ -52,15 +52,19 @@ export class UsersController extends BaseController {
     @Middleware(authMiddleware)
     public async me(req: Request, res: Response): Promise<Response> {
         try {
-            const email = req.decoded?.email || undefined
-            const user = await User.findOne({ email })
+            const userId = req.context?.userId
+            const user = await User.findOne({ _id: userId })
             if (!user) {
                 return this.sendErrorResponse(res, {
                     code: 404,
                     message: "User not found!"
                 })
             }
-            return res.send({ user })
+            return res.send({
+                name: user.name,
+                email: user.email,
+                id: user.id
+            })
         } catch (err) {
             return this.sendErrorResponse(res, { code: 500, message: "Something went wrong!" })
         }

@@ -59,14 +59,13 @@ describe("Users functional tests", () => {
                 email: "jonh@mail.com",
                 password: "abc123"
             }
-            await new User(newUser).save()
+            const user = await new User(newUser).save()
             const response = await global.testRequest.post("/users/authenticate").send({
                 email: newUser.email,
                 password: newUser.password
             })
-            expect(response.body).toEqual(
-                expect.objectContaining({ token: expect.any(String) })
-            )
+            const jwtClaims = AuthService.decodeToken(response.body.token)
+            expect(jwtClaims).toMatchObject({ sub: user.id })
         })
 
         it("should return UNAUTHORIZED if the user with the given email is not found", async () => {
@@ -82,7 +81,7 @@ describe("Users functional tests", () => {
             })
         })
 
-        it("should return ANAUTHORIZED if the user is found but the pass does not match", async () => {
+        it("should return UNAUTHORIZED if the user is found but the pass does not match", async () => {
             const newUser = {
                 name: "John Doe",
                 email: "jonh@mail.com",
@@ -110,23 +109,21 @@ describe("Users functional tests", () => {
                 password: "abc123"
             }
             const user = await new User(newUser).save()
-            const token = AuthService.generateToken(user.toJSON())
+            const token = AuthService.generateToken(user.id)
             const { body, status } = await global.testRequest
                 .get("/users/me")
                 .set({ "x-access-token": token })
 
             expect(status).toBe(200)
-            expect(body).toMatchObject(JSON.parse(JSON.stringify({ user })))
+            expect(body).toEqual({
+                name: user.name,
+                email: user.email,
+                id: user.id
+            })
         })
 
         it("should return Not Found, when the user is not found", async () => {
-            const newUser = {
-                name: "John Doe",
-                email: "jonh@mail.com",
-                password: "abc123"
-            }
-            const user = new User(newUser)
-            const token = AuthService.generateToken(user.toJSON())
+            const token = AuthService.generateToken("fake-user-id")
             const { body, status } = await global.testRequest
                 .get("/users/me")
                 .set({ "x-access-token": token })

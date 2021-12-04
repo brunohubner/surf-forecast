@@ -15,7 +15,7 @@ export class BeachesController extends BaseController {
                 lng: req.body.lng,
                 name: req.body.name,
                 position: req.body.position,
-                userId: req.decoded?.id
+                userId: req.context?.userId
             }
             const beach = new Beach(newBeach)
             const result = await beach.save()

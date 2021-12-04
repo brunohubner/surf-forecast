@@ -3,7 +3,7 @@ import { authMiddleware } from "@src/middlewares/auth"
 
 describe("AuthMiddlewares", () => {
     it("should verify a JWT token and call the next middleware", () => {
-        const jwtToken = AuthService.generateToken({ data: "fake-data" })
+        const jwtToken = AuthService.generateToken("fake-id")
         const reqFake = {
             headers: {
                 "x-access-token": jwtToken

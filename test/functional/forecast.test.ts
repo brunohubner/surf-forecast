@@ -18,7 +18,7 @@ describe("Beach forecast functional tests", () => {
 		await Beach.deleteMany({})
 		await User.deleteMany({})
 		const user = await new User(defaultUser).save()
-		token = AuthService.generateToken(user.toJSON())
+		token = AuthService.generateToken(user.id)
 
 		const defaultBeach: Beach = {
 			lat: -20.329372,

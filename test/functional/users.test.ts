@@ -36,6 +36,36 @@ describe("Users functional tests", () => {
             })
         })
 
+        it("should return a validation error when email is invalid", async () => {
+            const newUser = {
+                name: "John Doe",
+                email: "invalid-email",
+                password: "abc123"
+            }
+            const response = await global.testRequest.post("/users").send(newUser)
+            expect(response.status).toBe(400)
+            expect(response.body).toEqual({
+                code: 400,
+                error: "Bad Request",
+                message: "User validation failed: name: Invalid Email."
+            })
+        })
+
+        it("should return a validation error when password is invalid", async () => {
+            const newUser = {
+                name: "John Doe",
+                email: "jonh@mail.com",
+                password: "invalid-password"
+            }
+            const response = await global.testRequest.post("/users").send(newUser)
+            expect(response.status).toBe(400)
+            expect(response.body).toEqual({
+                code: 400,
+                error: "Bad Request",
+                message: "Password must be have 6-20 length and contains letters and numbers."
+            })
+        })
+
         it("should return 409 when email already exists", async () => {
             const newUser = {
                 name: "John Doe",

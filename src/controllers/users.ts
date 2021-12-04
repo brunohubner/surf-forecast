@@ -4,6 +4,7 @@ import { Request, Response } from "express"
 import { User } from "@src/models/user"
 import { BaseController } from "."
 import { authMiddleware } from "@src/middlewares/auth"
+import Validation from "@src/util/validation"
 
 @Controller("users")
 export class UsersController extends BaseController {
@@ -15,6 +16,22 @@ export class UsersController extends BaseController {
                 email: req.body.email,
                 password: req.body.password
             }
+            if (!Validation.email(newUser.email)) {
+                this.sendErrorResponse(res, {
+                    code: 400,
+                    message: "User validation failed: name: Invalid Email."
+                })
+                return
+            }
+
+            if (!Validation.password(newUser.password)) {
+                this.sendErrorResponse(res, {
+                    code: 400,
+                    message: "Password must be have 6-20 length and contains letters and numbers."
+                })
+                return
+            }
+
             const user = new User(newUser)
             const result = await user.save()
             res.status(201).send(result)

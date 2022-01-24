@@ -18,9 +18,9 @@ process.on("unhandledRejection", (reason, promise) => {
 process.on("uncaughtException", error => {
     logger.error(`App exiting due to an uncaught exception: ${error}`)
     process.exit(ExitStatus.Failure)
-});
+})
 
-(async (): Promise<void> => {
+;(async (): Promise<void> => {
     try {
         const server = new SetupServer(config.get("App.port"))
         await server.init()

@@ -13,8 +13,10 @@ export function apiErrorValidator(
     __: NextFunction
 ): void {
     const errorCode = error.status || 500
-    res.status(errorCode).send(ApiError.format({
-        code: errorCode,
-        message: error.message
-    }))
+    res.status(errorCode).send(
+        ApiError.format({
+            code: errorCode,
+            message: error.message
+        })
+    )
 }

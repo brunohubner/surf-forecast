@@ -20,7 +20,7 @@ describe("Rating Service", () => {
             waveDirection: 110,
             waveHeight: 0.1,
             windDirection: 100,
-            windSpeed: 100,
+            windSpeed: 100
         }
 
         it("should get a rating less than 1 for a poor point", () => {
@@ -30,7 +30,7 @@ describe("Rating Service", () => {
 
         it("should get a rating of 1 for an ok point", () => {
             const pointData = {
-                swellHeight: 0.4,
+                swellHeight: 0.4
             }
             // using spread operator for cloning objects instead of Object.assign
             const point = { ...defaultPoint, ...pointData }
@@ -44,8 +44,8 @@ describe("Rating Service", () => {
                 ...defaultPoint,
                 ...{
                     swellHeight: 0.7,
-                    windDirection: 250,
-                },
+                    windDirection: 250
+                }
             }
             const rating = defaultRating.getRateForPoint(point)
             expect(rating).toBe(3)
@@ -57,8 +57,8 @@ describe("Rating Service", () => {
                 ...{
                     swellHeight: 0.7,
                     swellPeriod: 12,
-                    windDirection: 250,
-                },
+                    windDirection: 250
+                }
             }
             const rating = defaultRating.getRateForPoint(point)
             expect(rating).toBe(4)
@@ -70,8 +70,8 @@ describe("Rating Service", () => {
                 ...{
                     swellHeight: 1.5,
                     swellPeriod: 12,
-                    windDirection: 250,
-                },
+                    windDirection: 250
+                }
             }
             const rating = defaultRating.getRateForPoint(point)
             expect(rating).toBe(4)
@@ -83,8 +83,8 @@ describe("Rating Service", () => {
                 ...{
                     swellHeight: 2.5,
                     swellPeriod: 16,
-                    windDirection: 250,
-                },
+                    windDirection: 250
+                }
             }
             const rating = defaultRating.getRateForPoint(point)
             expect(rating).toBe(5)
@@ -95,8 +95,8 @@ describe("Rating Service", () => {
                 ...{
                     swellHeight: 2.5,
                     swellPeriod: 16,
-                    windDirection: 130,
-                },
+                    windDirection: 130
+                }
             }
             const rating = defaultRating.getRateForPoint(point)
             expect(rating).toBe(4)

@@ -17,20 +17,23 @@ export abstract class BaseController {
                 ApiError.format({
                     code: clientErrors.code,
                     message: clientErrors.error
-                }))
+                })
+            )
         } else {
             logger.error(error)
             res.status(500).send(
                 ApiError.format({
                     code: 500,
                     message: "Something went wrong!"
-                }))
+                })
+            )
         }
     }
 
-    private handleClientErrors(
-        error: mongoose.Error.ValidationError
-    ): { code: number, error: string } {
+    private handleClientErrors(error: mongoose.Error.ValidationError): {
+        code: number
+        error: string
+    } {
         const duplicatedKindErrors = Object.values(error.errors).filter(err => {
             if (
                 err instanceof mongoose.Error.ValidatorError ||
@@ -39,7 +42,6 @@ export abstract class BaseController {
                 return err.kind === CUSTOM_VALIDATION.DUPLICATED
             }
             return false
-
         })
 
         return duplicatedKindErrors.length

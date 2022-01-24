@@ -22,13 +22,12 @@ describe("Beaches functional tests", () => {
     })
 
     describe("when creating a beach", () => {
-
         it("should create a beach with success", async () => {
             const newBeach = {
                 lat: -33.792726,
                 lng: 151.289824,
                 name: "Manly",
-                position: "E",
+                position: "E"
             }
             const response = await global.testRequest
                 .post("/beaches")
@@ -43,7 +42,7 @@ describe("Beaches functional tests", () => {
                 lat: "invalid_string",
                 lng: 151.289824,
                 name: "Manly",
-                position: "E",
+                position: "E"
             }
             const response = await global.testRequest
                 .post("/beaches")
@@ -53,7 +52,7 @@ describe("Beaches functional tests", () => {
             expect(response.body).toEqual({
                 code: 400,
                 error: "Bad Request",
-                message: "request.body.lat should be number",
+                message: "request.body.lat should be number"
             })
         })
 
@@ -66,7 +65,7 @@ describe("Beaches functional tests", () => {
                 lat: -33.792726,
                 lng: 46.43243,
                 name: "Manly",
-                position: "E",
+                position: "E"
             }
             const response = await global.testRequest
                 .post("/beaches")

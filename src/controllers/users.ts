@@ -27,7 +27,8 @@ export class UsersController extends BaseController {
             if (!Validation.password(newUser.password)) {
                 this.sendErrorResponse(res, {
                     code: 400,
-                    message: "Password must be have 6-20 length and contains letters and numbers."
+                    message:
+                        "Password must be have 6-20 length and contains letters and numbers."
                 })
                 return
             }
@@ -62,7 +63,10 @@ export class UsersController extends BaseController {
             const token = AuthService.generateToken(user.id)
             return res.status(200).send({ token })
         } catch (err) {
-            return this.sendErrorResponse(res, { code: 500, message: "Something went wrong!" })
+            return this.sendErrorResponse(res, {
+                code: 500,
+                message: "Something went wrong!"
+            })
         }
     }
     @Get("me")
@@ -83,7 +87,10 @@ export class UsersController extends BaseController {
                 id: user.id
             })
         } catch (err) {
-            return this.sendErrorResponse(res, { code: 500, message: "Something went wrong!" })
+            return this.sendErrorResponse(res, {
+                code: 500,
+                message: "Something went wrong!"
+            })
         }
     }
 }

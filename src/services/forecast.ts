@@ -25,7 +25,7 @@ export class Forecast {
     constructor(
         protected stormGlass = new StormGlass(),
         protected RatingService: typeof Rating = Rating
-    ) { }
+    ) {}
 
     public async processForecastForBeaches(
         beaches: Beach[],
@@ -47,7 +47,9 @@ export class Forecast {
     private async calculateRating(beaches: Beach[]): Promise<BeachForecast[]> {
         logger.info(`Preparing the forecast for ${beaches.length} beaches`)
         const response: ForecastPoint[][] = await Promise.all(
-            beaches.map(beach => this.stormGlass.fetchPoints(beach.lat, beach.lng))
+            beaches.map(beach =>
+                this.stormGlass.fetchPoints(beach.lat, beach.lng)
+            )
         )
 
         return response.flatMap((point: ForecastPoint[], index: number) => {
@@ -56,7 +58,11 @@ export class Forecast {
         })
     }
 
-    private enrichedBeachData(points: ForecastPoint[], beach: Beach, rating: Rating) {
+    private enrichedBeachData(
+        points: ForecastPoint[],
+        beach: Beach,
+        rating: Rating
+    ) {
         return points.map(point => ({
             lat: beach.lat,
             lng: beach.lng,

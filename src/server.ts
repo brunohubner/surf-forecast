@@ -22,9 +22,11 @@ export class SetupServer extends Server {
     }
 
     private setupExpress(): void {
-        this.app.use(cors({
-            origin: "*"
-        }))
+        this.app.use(
+            cors({
+                origin: "*"
+            })
+        )
         this.app.use(express.json())
         this.app.use(expressPino({ logger }))
     }
@@ -33,7 +35,11 @@ export class SetupServer extends Server {
         const forecastController = new ForecastController()
         const beachesController = new BeachesController()
         const usersController = new UsersController()
-        this.addControllers([forecastController, beachesController, usersController])
+        this.addControllers([
+            forecastController,
+            beachesController,
+            usersController
+        ])
     }
 
     private async databaseSetup(): Promise<void> {
@@ -45,7 +51,7 @@ export class SetupServer extends Server {
         await new OpenApiValidator({
             apiSpec: apiSchema as OpenAPIV3.Document,
             validateRequests: true,
-            validateResponses: true,
+            validateResponses: true
         }).install(this.app)
     }
 
@@ -58,7 +64,7 @@ export class SetupServer extends Server {
 
         if (this.server) {
             await new Promise<void>((resolve, reject) => {
-                this.server?.close((err) => {
+                this.server?.close(err => {
                     if (err) {
                         return reject(err)
                     }

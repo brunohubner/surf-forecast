@@ -249,10 +249,7 @@
             "orderBy": {
                 "type": "string",
                 "example": "desc",
-                "enum": [
-                    "asc",
-                    "desc"
-                ],
+                "enum": ["asc", "desc"],
                 "default": "desc"
             },
             "orderField": {
@@ -294,12 +291,7 @@
             },
             "beachPosition": {
                 "type": "string",
-                "enum": [
-                    "N",
-                    "S",
-                    "W",
-                    "E"
-                ],
+                "enum": ["N", "S", "W", "E"],
                 "example": "S"
             },
             "forecastPropertyKey": {
@@ -345,12 +337,7 @@
                         "$ref": "#/components/schemas/beachPosition"
                     }
                 },
-                "required": [
-                    "name",
-                    "lat",
-                    "lng",
-                    "position"
-                ]
+                "required": ["name", "lat", "lng", "position"]
             },
             "TimeForecast": {
                 "type": "array",

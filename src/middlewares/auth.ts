@@ -1,7 +1,11 @@
 import { AuthService } from "@src/services/auth"
 import { Request, Response, NextFunction } from "express"
 
-export function authMiddleware(req: Partial<Request>, res: Partial<Response>, next: NextFunction): void {
+export function authMiddleware(
+    req: Partial<Request>,
+    res: Partial<Response>,
+    next: NextFunction
+): void {
     const token = req.headers?.["x-access-token"]
     try {
         const claims = AuthService.decodeToken(token as string)

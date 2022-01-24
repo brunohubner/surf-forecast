@@ -9,35 +9,41 @@ export interface User {
     password: string
 }
 
-export interface UserModel extends Omit<User, "_id">, Document { }
+export interface UserModel extends Omit<User, "_id">, Document {}
 
 export enum CUSTOM_VALIDATION {
     DUPLICATED = "DUPLICATED"
 }
 
-const schema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: {
-        type: String,
-        required: true,
-        unique: true
+const schema = new mongoose.Schema(
+    {
+        name: { type: String, required: true },
+        email: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        password: { type: String, required: true }
     },
-    password: { type: String, required: true }
-}, {
-    toJSON: {
-        transform(_, ret): void {
-            ret.id = ret._id
-            delete ret._id
-            delete ret.__v
+    {
+        toJSON: {
+            transform(_, ret): void {
+                ret.id = ret._id
+                delete ret._id
+                delete ret.__v
+            }
         }
     }
-})
+)
 
-schema.path("email").validate(async (email: string) => {
-    const emailCount = await mongoose.models.User.countDocuments({ email })
-    return !emailCount
-}, "already exists in the database.", CUSTOM_VALIDATION.DUPLICATED)
-
+schema.path("email").validate(
+    async (email: string) => {
+        const emailCount = await mongoose.models.User.countDocuments({ email })
+        return !emailCount
+    },
+    "already exists in the database.",
+    CUSTOM_VALIDATION.DUPLICATED
+)
 
 schema.pre<UserModel>("save", async function (): Promise<void> {
     if (!this.password || !this.isModified("password")) return

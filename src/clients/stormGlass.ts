@@ -14,12 +14,12 @@ export interface StormGlassPointSource {
 
 export interface StormGlassPoint {
     readonly time: string
-    readonly swellDirection: StormGlassPointSource,
-    readonly swellHeight: StormGlassPointSource,
-    readonly swellPeriod: StormGlassPointSource,
-    readonly waveDirection: StormGlassPointSource,
-    readonly waveHeight: StormGlassPointSource,
-    readonly windDirection: StormGlassPointSource,
+    readonly swellDirection: StormGlassPointSource
+    readonly swellHeight: StormGlassPointSource
+    readonly swellPeriod: StormGlassPointSource
+    readonly waveDirection: StormGlassPointSource
+    readonly waveHeight: StormGlassPointSource
+    readonly windDirection: StormGlassPointSource
     readonly windSpeed: StormGlassPointSource
 }
 
@@ -29,12 +29,12 @@ export interface StormGlassForecastResponse {
 
 export interface ForecastPoint {
     time: string
-    swellDirection: number,
-    swellHeight: number,
-    swellPeriod: number,
-    waveDirection: number,
-    waveHeight: number,
-    windDirection: number,
+    swellDirection: number
+    swellHeight: number
+    swellPeriod: number
+    waveDirection: number
+    waveHeight: number
+    windDirection: number
     windSpeed: number
 }
 
@@ -54,9 +54,7 @@ export class StormGlassResponseError extends InternalError {
     }
 }
 
-const stormGlassResourceConfig: IConfig = config.get(
-    "App.resources.StormGlass"
-)
+const stormGlassResourceConfig: IConfig = config.get("App.resources.StormGlass")
 
 export class StormGlass {
     readonly stormGlassApiParams =
@@ -66,38 +64,63 @@ export class StormGlass {
     constructor(
         protected request = new HTTPUtil.Request(),
         protected cacheUtil = CacheUtil
-    ) { }
+    ) {}
 
-    public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
-        const cachedForecastPoints = this.getForecastPointsFromCache(this.getCacheKey(lat, lng))
+    public async fetchPoints(
+        lat: number,
+        lng: number
+    ): Promise<ForecastPoint[]> {
+        const cachedForecastPoints = this.getForecastPointsFromCache(
+            this.getCacheKey(lat, lng)
+        )
         if (!cachedForecastPoints) {
             const forecastPoints = await this.getForecastPointsFromApi(lat, lng)
-            this.setForecastPointsInCache(this.getCacheKey(lat, lng), forecastPoints)
+            this.setForecastPointsInCache(
+                this.getCacheKey(lat, lng),
+                forecastPoints
+            )
             return forecastPoints
         }
         return cachedForecastPoints
     }
-    public async getForecastPointsFromApi(lat: number, lng: number): Promise<ForecastPoint[]> {
+    public async getForecastPointsFromApi(
+        lat: number,
+        lng: number
+    ): Promise<ForecastPoint[]> {
         const endTimestamp = TimeUtil.getUnixTimeForAFutureDay(1)
         try {
-            const url = `${stormGlassResourceConfig.get("apiUrl")}/weather/point?params=${this.stormGlassApiParams}&source=${this.stormGlassApiSource}&lat=${lat}&lng=${lng}&end=${endTimestamp}`
+            const url = `${stormGlassResourceConfig.get(
+                "apiUrl"
+            )}/weather/point?params=${this.stormGlassApiParams}&source=${
+                this.stormGlassApiSource
+            }&lat=${lat}&lng=${lng}&end=${endTimestamp}`
 
-            const response = await this.request.get<StormGlassForecastResponse>(url, {
-                headers: {
-                    Authorization: process.env.STORM_GLASS_API_TOKEN || stormGlassResourceConfig.get("apiToken")
+            const response = await this.request.get<StormGlassForecastResponse>(
+                url,
+                {
+                    headers: {
+                        Authorization:
+                            process.env.STORM_GLASS_API_TOKEN ||
+                            stormGlassResourceConfig.get("apiToken")
+                    }
                 }
-            })
+            )
             return this.normalizeResponse(response.data)
         } catch (err) {
             if (HTTPUtil.Request.isRequestError(err as HTTPUtil.RequestError)) {
                 throw new StormGlassResponseError(
-                    `Error: ${JSON.stringify((err as HTTPUtil.RequestError).response?.data)} Code: ${(err as HTTPUtil.RequestError).response?.status}`)
+                    `Error: ${JSON.stringify(
+                        (err as HTTPUtil.RequestError).response?.data
+                    )} Code: ${(err as HTTPUtil.RequestError).response?.status}`
+                )
             }
             throw new ClientRequestError((err as Error).message)
         }
     }
 
-    protected getForecastPointsFromCache(key: string): ForecastPoint[] | undefined {
+    protected getForecastPointsFromCache(
+        key: string
+    ): ForecastPoint[] | undefined {
         const forecastPointsFromCache = this.cacheUtil.get<ForecastPoint[]>(key)
         if (!forecastPointsFromCache) return
 
@@ -109,9 +132,16 @@ export class StormGlass {
         return `forecast_points_${lat}_${lng}`
     }
 
-    private setForecastPointsInCache(key: string, forecastPoints: ForecastPoint[]): boolean {
+    private setForecastPointsInCache(
+        key: string,
+        forecastPoints: ForecastPoint[]
+    ): boolean {
         logger.info(`Updating cache to return forecast points for key: ${key}`)
-        return this.cacheUtil.set(key, forecastPoints, stormGlassResourceConfig.get("cacheTtl"))
+        return this.cacheUtil.set(
+            key,
+            forecastPoints,
+            stormGlassResourceConfig.get("cacheTtl")
+        )
     }
 
     private normalizeResponse(

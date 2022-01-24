@@ -13,13 +13,22 @@ describe("Users functional tests", () => {
                 password: "abc123"
             }
 
-            const response = await global.testRequest.post("/users").send(newUser)
+            const response = await global.testRequest
+                .post("/users")
+                .send(newUser)
             expect(response.status).toBe(201)
-            await expect(AuthService.comparePassword(newUser.password, response.body.password)).resolves.toBeTruthy()
-            expect(response.body).toEqual(expect.objectContaining({
-                ...newUser,
-                password: expect.any(String)
-            }))
+            await expect(
+                AuthService.comparePassword(
+                    newUser.password,
+                    response.body.password
+                )
+            ).resolves.toBeTruthy()
+            expect(response.body).toEqual(
+                expect.objectContaining({
+                    ...newUser,
+                    password: expect.any(String)
+                })
+            )
         })
 
         it("should return is a validation error when a field is missing", async () => {
@@ -27,12 +36,15 @@ describe("Users functional tests", () => {
                 email: "john@mail.com",
                 password: "abc123"
             }
-            const response = await global.testRequest.post("/users").send(newUser)
+            const response = await global.testRequest
+                .post("/users")
+                .send(newUser)
             expect(response.status).toBe(400)
             expect(response.body).toEqual({
                 code: 400,
                 error: "Bad Request",
-                message: "User validation failed: name: Path `name` is required."
+                message:
+                    "User validation failed: name: Path `name` is required."
             })
         })
 
@@ -42,7 +54,9 @@ describe("Users functional tests", () => {
                 email: "invalid-email",
                 password: "abc123"
             }
-            const response = await global.testRequest.post("/users").send(newUser)
+            const response = await global.testRequest
+                .post("/users")
+                .send(newUser)
             expect(response.status).toBe(400)
             expect(response.body).toEqual({
                 code: 400,
@@ -57,12 +71,15 @@ describe("Users functional tests", () => {
                 email: "jonh@mail.com",
                 password: "invalid-password"
             }
-            const response = await global.testRequest.post("/users").send(newUser)
+            const response = await global.testRequest
+                .post("/users")
+                .send(newUser)
             expect(response.status).toBe(400)
             expect(response.body).toEqual({
                 code: 400,
                 error: "Bad Request",
-                message: "Password must be have 6-20 length and contains letters and numbers."
+                message:
+                    "Password must be have 6-20 length and contains letters and numbers."
             })
         })
 
@@ -73,12 +90,15 @@ describe("Users functional tests", () => {
                 password: "abc123"
             }
             await global.testRequest.post("/users").send(newUser)
-            const response = await global.testRequest.post("/users").send(newUser)
+            const response = await global.testRequest
+                .post("/users")
+                .send(newUser)
             expect(response.status).toBe(409)
             expect(response.body).toEqual({
                 code: 409,
                 error: "Conflict",
-                message: "User validation failed: email: already exists in the database."
+                message:
+                    "User validation failed: email: already exists in the database."
             })
         })
     })
@@ -90,19 +110,23 @@ describe("Users functional tests", () => {
                 password: "abc123"
             }
             const user = await new User(newUser).save()
-            const response = await global.testRequest.post("/users/authenticate").send({
-                email: newUser.email,
-                password: newUser.password
-            })
+            const response = await global.testRequest
+                .post("/users/authenticate")
+                .send({
+                    email: newUser.email,
+                    password: newUser.password
+                })
             const jwtClaims = AuthService.decodeToken(response.body.token)
             expect(jwtClaims).toMatchObject({ sub: user.id })
         })
 
         it("should return UNAUTHORIZED if the user with the given email is not found", async () => {
-            const response = await global.testRequest.post("/users/authenticate").send({
-                email: "some-email@mail.com",
-                password: "abc123"
-            })
+            const response = await global.testRequest
+                .post("/users/authenticate")
+                .send({
+                    email: "some-email@mail.com",
+                    password: "abc123"
+                })
             expect(response.status).toBe(401)
             expect(response.body).toEqual({
                 code: 401,
@@ -118,10 +142,12 @@ describe("Users functional tests", () => {
                 password: "abc123"
             }
             await new User(newUser).save()
-            const response = await global.testRequest.post("/users/authenticate").send({
-                email: newUser.email,
-                password: "different-password"
-            })
+            const response = await global.testRequest
+                .post("/users/authenticate")
+                .send({
+                    email: newUser.email,
+                    password: "different-password"
+                })
             expect(response.status).toBe(401)
             expect(response.body).toEqual({
                 code: 401,
